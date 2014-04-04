@@ -1,0 +1,13 @@
+displayName = "Ecurrencies - PagSeguro Provider Module"
+
+description = "Implements all PagSeguro API services in the form of Akka actors."
+
+
+dependencies {
+    compile libs['akka-actor']
+    compile libs['spray-client']
+    compile project(':api')
+    compile project(':pagseguro-domain')
+
+    testCompile libs['akka-testkit']
+}
