@@ -1,0 +1,15 @@
+displayName = "Ecurrencies - RabbitMQ Integration Module"
+
+description = "This is an integration module that provides a binding to a RabbitMQ server."
+
+dependencies {
+    compile libs['akka-actor']
+    compile libs['akka-rabbitmq']
+    compile libs['amqp-client']
+    compile project(':api')
+    compile project(':serializers')
+
+    testCompile libs['protobuf-java']
+    testCompile libs['akka-testkit']
+    testCompile project(':pagseguro-domain')
+}
