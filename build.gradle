@@ -1,0 +1,124 @@
+buildscript {
+    repositories {
+        mavenLocal()
+        mavenCentral()
+    }
+    dependencies {
+        classpath 'com.github.rafael-brandao.gradle:gradle-scalabuff:0.0.1-SNAPSHOT'
+        classpath 'nl.javadude.gradle.plugins:license-gradle-plugin:0.7.0'
+    }
+}
+
+allprojects {
+    group = 'com.github.rafael-brandao.ecurrencies'
+    version = '0.0.1-SNAPSHOT'
+}
+
+apply from: script('jvm-enforcer')
+apply from: script('subprojects')
+apply from: script('ide')
+apply from: script('license')
+
+ext {
+    scalaVersion = '2.10'
+
+    libs = [
+            // Akka 2.3.1
+            'akka-actor'       : "com.typesafe.akka:akka-actor_$scalaVersion:2.3.1",
+            'akka-testkit'     : "com.typesafe.akka:akka-testkit_$scalaVersion:2.3.1",
+
+            'akka-rabbitmq'    : "com.thenewmotion.akka:akka-rabbitmq_$scalaVersion:1.1.0",
+            'amqp-client'      : 'com.rabbitmq:amqp-client:3.2.3',
+            'hamcrest-all'     : 'org.hamcrest:hamcrest-all:1.3',
+            'junit'            : 'junit:junit:4.11',
+            'mockito-all'      : 'org.mockito:mockito-all:1.9.5',
+            'protobuf-java'    : 'com.google.protobuf:protobuf-java:2.5.0',
+
+            // Scala 2.10.4
+            'scala-compiler'   : 'org.scala-lang:scala-compiler:2.10.4',
+            'scala-library'    : 'org.scala-lang:scala-library:2.10.4',
+            'scala-reflect'    : 'org.scala-lang:scala-reflect:2.10.4',
+
+            'scalabuff-runtime': "net.sandrogrzicic:scalabuff-runtime_$scalaVersion:1.3.7",
+            'scalatest'        : "org.scalatest:scalatest_$scalaVersion:2.1.0",
+            'snappy-java'      : 'org.xerial.snappy:snappy-java:1.1.1-M1',
+            'spray-client'     : 'io.spray:spray-client:1.3.1',
+            'zinc'             : 'com.typesafe.zinc:zinc:0.3.2-M1'
+    ]
+}
+
+configure(scalaProjects) {
+    apply plugin: 'scala'
+    apply from: script('publish-maven')
+
+    repositories {
+        mavenCentral()
+        maven { url 'http://nexus.thenewmotion.com/content/repositories/releases-public' }
+        maven { url 'http://repo.spray.io' }
+    }
+
+    dependencies {
+        compile libs['scala-library']
+
+        testCompile libs['hamcrest-all']
+        testCompile libs['junit']
+        testCompile libs['mockito-all']
+        testCompile libs['scalatest']
+
+        zinc libs['zinc']
+    }
+
+    configurations.all*.resolutionStrategy {
+        force libs['protobuf-java']
+        force libs['scala-compiler']
+        force libs['scala-library']
+    }
+
+    tasks.withType(ScalaCompile) {
+        configure(options) {
+            encoding = 'UTF-8'
+        }
+        // Warning
+        // Akka has not been compiled or tested with -optimise Scala compiler flag.
+        // Strange behavior has been reported by users that have tried it.
+        configure(scalaCompileOptions) {
+            encoding = 'UTF-8'
+            additionalParameters = ['-feature', '-Yinline-warnings', '-Ywarn-all']
+            deprecation = true
+            useCompileDaemon = false
+            useAnt = true
+            configure(forkOptions) {
+                memoryMaximumSize = '1g'
+                jvmArgs = ['-XX:MaxPermSize=512m']
+            }
+        }
+    }
+
+    afterEvaluate {
+        task sourcesJar(type: Jar, dependsOn: classes) {
+            classifier = "sources"
+            from sourceSets.main.allSource.srcDirs
+        }
+
+        artifacts { archives sourcesJar }
+    }
+
+    sourceSets.main.java.srcDirs = []
+    sourceSets.test.java.srcDirs = []
+}
+
+configure(scalabuffProjects) {
+    apply plugin: 'scalabuff'
+
+    scalabuff {
+        outputIsExclusive = true
+    }
+
+    tasks.withType(ScalaCompile) {
+        scalaCompileOptions.useAnt = true
+    }
+}
+
+File script(String name) {
+    project.file("gradle/${name}.gradle")
+}

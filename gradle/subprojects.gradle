@@ -1,0 +1,23 @@
+def scalaMarkup = ['src/main/scala']
+def scalabuffMarkup = ['src/protobuff']
+
+def anySubdirectoryExists(project, list) {
+    list.any {
+        file("${project.projectDir}/${it}").isDirectory()
+    }
+}
+
+ext {
+    scalabuffProjects = [] as Set
+    scalaProjects = [] as Set
+}
+
+subprojects.each {
+    if(anySubdirectoryExists(it, scalabuffMarkup)) {
+        scalabuffProjects += it
+        scalaProjects += it
+    }
+    if(anySubdirectoryExists(it, scalaMarkup)) {
+        scalaProjects += it
+    }
+}

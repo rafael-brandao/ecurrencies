@@ -1,0 +1,79 @@
+apply plugin: 'maven'
+
+def basePom = {
+    project {
+        name project.displayName
+        description = project.description
+        url = 'https://github.com/rafael-st-rj/ecurrencies'
+
+        licenses {
+            license {
+                name 'GNU LESSER GENERAL PUBLIC LICENSE'
+                url 'http://www.gnu.org/licenses/lgpl-3.0-standalone.html'
+                distribution 'repo'
+            }
+        }
+        scm {
+            url = 'https://github.com/rafael-st-rj/ecurrencies'
+            connection = 'scm:git:git://github.com/rafael-st-rj/ecurrencies'
+            developerConnection = 'scm:git:git://github.com/rafael-st-rj/ecurrencies'
+        }
+        developers {
+            developer {
+                id = 'rafael-st-rj'
+                name = 'Rafael Brandão'
+                email = 'rafa.bra@gmail.com'
+            }
+        }
+        issueManagement {
+            system = 'GitHub'
+            url = 'https://github.com/rafael-st-rj/ecurrencies/issues'
+        }
+    }
+}
+
+def deployers = []
+
+project.afterEvaluate {
+    configure(deployers) {
+        pom basePom
+    }
+}
+
+install {
+    deployers << repositories.mavenInstaller
+}
+
+def poms = deployers*.pom
+def optionalDeps = []
+def providedDeps = []
+def internalDeps = []
+
+ext {
+    modifyPom = { Closure modification ->
+        poms.each {
+            it.whenConfigured(modification)
+        }
+    }
+
+    optional = { optionalDeps << it; it }
+    provided = { providedDeps << it; it }
+    internal = { internalDeps << it; it }
+}
+
+modifyPom { pom ->
+    optionalDeps.each { dep ->
+        pom.dependencies.find { it.artifactId == dep.name }.optional = true
+    }
+    providedDeps.each { dep ->
+        pom.dependencies.find { it.artifactId == dep.name }.scope = "provided"
+    }
+    internalDeps.each { dep ->
+        pom.dependencies.removeAll { it.artifactId == dep.name }
+    }
+    // eliminate test-scoped dependencies (no need in maven central poms)
+    pom.dependencies.removeAll { it.scope == "test" }
+
+    // sort to make pom dependencies order consistent to ease comparison of older poms
+    pom.dependencies = pom.dependencies.sort { dep -> "$dep.scope:$dep.groupId:$dep.artifactId" }
+}
