@@ -1,0 +1,16 @@
+displayName = "Ecurrencies - Serializers Module"
+
+description = "Provides message serialization support to integration modules."
+
+dependencies {
+    compile libs['akka-actor']
+    compile libs['scala-reflect']
+    compile project(':api')
+
+    compile libs['protobuf-java'], optional
+    compile libs['scalabuff-runtime'], optional
+    compile libs['snappy-java'], optional
+
+    testCompile libs['akka-testkit']
+    testCompile project(':pagseguro-domain')
+}
