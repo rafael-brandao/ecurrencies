@@ -1,0 +1,3 @@
+displayName = "Ecurrencies - PagSeguro Domain Module"
+
+description = "Provides the domain model of PagSeguro services as Protocol Buffer Messages."

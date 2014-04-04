@@ -1,0 +1,348 @@
+option java_package = "ecurrencies.pagseguro.domain";
+
+option java_multiple_files = true;
+
+message Credentials {
+    required string email = 1;
+    required string token = 2;
+}
+
+enum Country {
+    BRA = 1;
+}
+
+message Address {
+    required string street = 1;
+    required string number = 2;
+    optional string complement = 3;
+    required string district = 4;
+    required string city = 5;
+    required string state = 6;
+    required Country country = 7;
+    required string postalCode = 8;
+}
+
+enum HttpErrorCode {
+    BAD_REQUEST = 400;
+    UNAUTHORIZED = 401;
+    FORBIDDEN = 403;
+    NOT_FOUND = 404;
+    INTERNAL_SERVER_ERROR = 500;
+}
+
+message HttpError {
+    required HttpErrorCode code = 1;
+    optional string message = 2;
+}
+
+message Error {
+    required int32 code = 1;
+    optional string message = 2;
+}
+
+message Item {
+    required string id = 1;
+    required string description = 2;
+    required double amount = 3;
+    required int32 quantity = 4;
+    optional int64 weight = 5;
+    optional double shippingCost = 6;
+}
+
+enum NotificationType {
+    TRANSACTION = 1;
+}
+
+message Notification {
+    required NotificationType value = 1;
+    required string code = 2;
+}
+
+enum PaymentMethodType {
+    CREDIT_CARD = 1;
+    BOLETO = 2;
+    ONLINE_TRANSFER = 3;
+    BALANCE = 4;
+    OI_PAGGO = 5;
+    DIRECT_DEPOSIT = 6;
+}
+
+enum PaymentMethodCode {
+    VISA_CREDIT_CARD = 101;
+    MASTERCARD_CREDIT_CARD = 102;
+    AMEX_CREDIT_CARD = 103;
+    DINERS_CREDIT_CARD = 104;
+    HIPERCARD_CREDIT_CARD = 105;
+    AURA_CREDIT_CARD = 106;
+    ELO_CREDIT_CARD = 107;
+    PLENO_CREDIT_CARD = 108;
+    PERSONAL_CREDIT_CARD = 109;
+    JCB_CREDIT_CARD = 110;
+    DISCOVER_CREDIT_CARD = 111;
+    BRASIL_CREDIT_CARD = 112;
+    FORTBRASIL_CREDIT_CARD = 113;
+    CARDBAN_CREDIT_CARD = 114;
+    VALECARD_CREDIT_CARD = 115;
+    CABAL_CREDIT_CARD = 116;
+    MAIS_CREDIT_CARD = 117;
+    AVISTA_CREDIT_CARD = 118;
+    GRANDCARD_CREDIT_CARD = 119;
+    BRADESCO_BOLETO = 201;
+    SANTANDER_BOLETO = 202;
+    BRADESCO_ONLINE_TRANSFER = 301;
+    ITAU_ONLINE_TRANSFER = 302;
+    UNIBANCO_ONLINE_TRANSFER = 303;
+    BANCO_BRASIL_ONLINE_TRANSFER = 304;
+    REAL_ONLINE_TRANSFER = 305;
+    BANRISUL_ONLINE_TRANSFER = 306;
+    HSBC_ONLINE_TRANSFER = 307;
+    PS_BALANCE = 401;
+    OI_PAGGO_CODE = 501;
+    BANCO_BRASIL_DIRECT_DEPOSIT = 701;
+    HSBC_DIRECT_DEPOSIT = 702;
+}
+
+message PaymentMethod {
+    required PaymentMethodType type = 1;
+    optional PaymentMethodCode code = 2;
+}
+
+message Phone {
+    required string areaCode = 1;
+    required string number = 2;
+}
+
+enum DocumentType {
+    CPF = 1;
+}
+
+message Document {
+    required DocumentType type = 1;
+    required int64 value = 2;
+}
+
+message Sender {
+    optional string name = 1;
+    optional string email = 2;
+    optional Phone phone = 3;
+    repeated Document documents = 4;
+    optional string bornDate = 5;
+}
+
+enum ShippingType {
+    PAC = 1;
+    SEDEX = 2;
+    NOT_SPECIFIED = 3;
+}
+
+message Shipping {
+    required ShippingType type = 1;
+    optional double cost = 2;
+    optional Address address = 3;
+}
+
+enum Currency {
+    BRL = 1;
+}
+
+message Receiver {
+    required string email = 1;
+}
+
+enum MetadataItemKey {
+    PASSENGER_CPF = 1;
+    PASSENGER_PASSPORT = 2;
+    ORIGIN_CITY = 3;
+    DESTINATION_CITY = 4;
+    ORIGIN_AIRPORT_CODE = 5;
+    DESTINATION_AIRPORT_CODE = 6;
+    GAME_NAME = 7;
+    PLAYER_ID = 8;
+    TIME_IN_GAME_DAYS = 9;
+    MOBILE_NUMBER = 10;
+    PASSENGER_NAME = 11;
+}
+
+message MetadataItem {
+    required MetadataItemKey key = 1;
+    required string value = 2;
+    optional int64 group = 3;
+}
+
+enum TransactionType {
+    PAYMENT = 1;
+    TRANSFER = 2;
+    FUND_ADDITION = 3;
+    WITHDRAW = 4;
+    CHARGE = 5;
+    DONATION = 6;
+    BONUS = 7;
+    BONUS_REPASS = 8;
+    OPERATIONAL = 9;
+    POLITICAL_DONATION = 10;
+}
+
+enum TransactionStatus {
+    INITIATED = 0;
+    WAITING_PAYMENT = 1;
+    IN_ANALYSIS = 2;
+    PAID = 3;
+    AVAILABLE = 4;
+    IN_DISPUTE = 5;
+    REFUNDED = 6;
+    CANCELLED = 7;
+}
+
+enum TransactionCancellationSource {
+    INTERNAL = 1;
+    EXTERNAL = 2;
+}
+
+message AbandonedTransaction {
+    required string date = 1;
+    required string lastEventDate = 2;
+    required string code = 3;
+    optional string reference = 4;
+    required TransactionType type = 5;
+    required double grossAmount = 6;
+}
+
+message TransactionSummary {
+    required string date = 1;
+    required string lastEventDate = 2;
+    required string code = 3;
+    optional string reference = 4;
+    required TransactionType type = 5;
+    required TransactionStatus status = 6;
+    optional TransactionCancellationSource cancellationSource = 7;
+    required PaymentMethod paymentMethod = 8;
+    required double grossAmount = 9;
+    required double discountAmount = 10;
+    required double feeAmount = 11;
+    required double netAmount = 12;
+    required double extraAmount = 13;
+}
+
+message Transaction {
+    required string date = 1;
+    required string lastEventDate = 2;
+    required string code = 3;
+    optional string reference = 4;
+    required TransactionType type = 5;
+    required TransactionStatus status = 6;
+    optional TransactionCancellationSource cancellationSource = 7;
+    required PaymentMethod paymentMethod = 8;
+    required double grossAmount = 9;
+    required double discountAmount = 10;
+    required double feeAmount = 11;
+    required double netAmount = 12;
+    required double extraAmount = 13;
+    optional string escrowEndDate = 14;
+    required int32 installmentCount = 15;
+    required int32 itemCount = 16;
+    repeated Item items = 17;
+    required Sender sender = 18;
+    required Shipping shipping = 19;
+}
+
+message PaymentResult {
+    required string code = 1;
+    required string date = 2;
+    optional string redirectUrl = 3;
+}
+
+message TransactionSearchResult {
+    message ByDate {
+        required string date = 1;
+        required Pagination pagination = 2;
+        repeated TransactionSummary transactions = 3;
+    }
+
+    message Abandoned {
+        required string date = 1;
+        required Pagination pagination = 2;
+        repeated AbandonedTransaction transactions = 3;
+    }
+
+    message Pagination {
+        required int32 currentPage = 1;
+        required int32 resultsInThisPage = 2;
+        required int32 totalPages = 3;
+    }
+}
+
+message PaymentRequest {
+    optional Credentials credentials = 1;
+    optional Receiver receiver = 2;
+    required Currency currency = 3 [default = BRL];
+    repeated Item items = 4;
+    optional string reference = 5;
+    optional Sender sender = 6;
+    optional Shipping shipping = 7;
+    optional double extraAmount = 8;
+    optional string redirectURL = 9;
+    optional string notificationURL = 10;
+    optional int32 maxUses = 11;
+    optional int32 maxAge = 12;
+    repeated MetadataItem metadataItems = 13;
+}
+
+message TransactionNotificationRequest {
+    optional Credentials credentials = 1;
+    required string code = 2;
+}
+
+message TransactionSearchRequest {
+    message ByCode {
+        optional Credentials credentials = 1;
+        required string code = 2;
+    }
+
+    message ByDate {
+        optional Credentials credentials = 1;
+        required DateRange dateRange = 2;
+        optional Pagination pagination = 3;
+    }
+
+    message Abandoned {
+        optional Credentials credentials = 1;
+        required DateRange dateRange = 2;
+        optional Pagination pagination = 3;
+    }
+
+    message DateRange {
+        required string initialDate = 1;
+        required string finalDate = 2;
+    }
+
+    message Pagination {
+        optional int32 page = 1;
+        optional int32 maxPageResults = 2;
+    }
+}
+
+message PaymentResponse {
+    required string status = 1;
+    repeated Error errors = 2;
+    optional PaymentResult result = 3;
+}
+
+message TransactionSearchResponse {
+    message ByDate {
+        required string status = 1;
+        repeated Error errors = 2;
+        optional TransactionSearchResult.ByDate result = 3;
+    }
+
+    message Abandoned {
+        required string status = 1;
+        repeated Error errors = 2;
+        optional TransactionSearchResult.Abandoned result = 3;
+    }
+}
+
+message TransactionResponse {
+    required string status = 1;
+    repeated Error errors = 2;
+    optional Transaction transaction = 3;
+}
