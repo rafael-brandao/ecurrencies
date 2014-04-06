@@ -2,10 +2,10 @@ rootProject.name = 'ecurrencies'
 
 // PagSeguro Payment Processor
 include 'pagseguro-domain'
-project(':pagseguro-domain').projectDir = new File(settingsDir, 'payment-processor/pagseguro/domain')
+project(':pagseguro-domain').projectDir = new File(settingsDir, 'gateway/pagseguro/domain')
 
 include 'pagseguro-provider'
-project(':pagseguro-provider').projectDir = new File(settingsDir, 'payment-processor/pagseguro/provider')
+project(':pagseguro-provider').projectDir = new File(settingsDir, 'gateway/pagseguro/provider')
 
 // RabbitMQ Integration
 include 'rabbitmq-integration'
