@@ -3,7 +3,7 @@ def scalabuffMarkup = ['src/protobuff']
 
 def anySubdirectoryExists(project, list) {
     list.any {
-        file("${project.projectDir}/${it}").isDirectory()
+        file("${project.projectDir}/$it").isDirectory()
     }
 }
 
@@ -14,10 +14,10 @@ ext {
 
 subprojects.each {
     if(anySubdirectoryExists(it, scalabuffMarkup)) {
-        scalabuffProjects += it
-        scalaProjects += it
+        scalabuffProjects << it
+        scalaProjects << it
     }
     if(anySubdirectoryExists(it, scalaMarkup)) {
-        scalaProjects += it
+        scalaProjects << it
     }
 }
