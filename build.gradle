@@ -17,15 +17,14 @@ allprojects {
 apply from: script('jvm-enforcer')
 apply from: script('subprojects')
 apply from: script('ide')
-apply from: script('license')
 
 ext {
     scalaVersion = '2.10'
 
     libs = [
-            // Akka 2.3.1
-            'akka-actor'       : "com.typesafe.akka:akka-actor_$scalaVersion:2.3.1",
-            'akka-testkit'     : "com.typesafe.akka:akka-testkit_$scalaVersion:2.3.1",
+            // Akka 2.3.2
+            'akka-actor'       : "com.typesafe.akka:akka-actor_$scalaVersion:2.3.2",
+            'akka-testkit'     : "com.typesafe.akka:akka-testkit_$scalaVersion:2.3.2",
 
             'akka-rabbitmq'    : "com.thenewmotion.akka:akka-rabbitmq_$scalaVersion:1.1.0",
             'amqp-client'      : 'com.rabbitmq:amqp-client:3.2.3',
@@ -96,13 +95,14 @@ configure(scalaProjects) {
 
     afterEvaluate {
         task sourcesJar(type: Jar, dependsOn: classes) {
-            classifier = "sources"
+            classifier = 'sources'
             from sourceSets.main.allSource.srcDirs
         }
 
         artifacts { archives sourcesJar }
     }
 
+    // Making it strict scala project by default
     sourceSets.main.java.srcDirs = []
     sourceSets.test.java.srcDirs = []
 }
@@ -112,13 +112,22 @@ configure(scalabuffProjects) {
 
     scalabuff {
         outputIsExclusive = true
+        generateDescriptor = true
     }
 
     tasks.withType(ScalaCompile) {
         scalaCompileOptions.useAnt = true
     }
+
+    artifacts {
+        archives file : file('src/protobuff/domain.proto'), type:'proto'
+        archives file : file("${scalabuff.generatedResourcesDir}/domain.proto.descriptor"), type:'proto.descriptor'
+    }
+
 }
 
 File script(String name) {
     project.file("gradle/${name}.gradle")
 }
+
+apply from: script('license')
