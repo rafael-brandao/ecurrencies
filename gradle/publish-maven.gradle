@@ -4,7 +4,7 @@ def basePom = {
     project {
         name project.displayName
         description = project.description
-        url = 'https://github.com/rafael-st-rj/ecurrencies'
+        url = 'https://github.com/rafael-brandao/ecurrencies'
 
         licenses {
             license {
@@ -20,7 +20,7 @@ def basePom = {
         }
         developers {
             developer {
-                id = 'rafael-st-rj'
+                id = 'rafael-brandao'
                 name = 'Rafael Brandão'
                 email = 'rafa.bra@gmail.com'
             }
