@@ -14,9 +14,9 @@ def basePom = {
             }
         }
         scm {
-            url = 'https://github.com/rafael-st-rj/ecurrencies'
-            connection = 'scm:git:git://github.com/rafael-st-rj/ecurrencies'
-            developerConnection = 'scm:git:git://github.com/rafael-st-rj/ecurrencies'
+    url = 'https://github.com/rafael-brandao/ecurrencies'
+            connection = 'scm:git:git://github.com/rafael-brandao/ecurrencies'
+            developerConnection = 'scm:git:git://github.com/rafael-brandao/ecurrencies'
         }
         developers {
             developer {
@@ -27,7 +27,7 @@ def basePom = {
         }
         issueManagement {
             system = 'GitHub'
-            url = 'https://github.com/rafael-st-rj/ecurrencies/issues'
+            url = 'https://github.com/rafael-brandao/ecurrencies/issues'
         }
     }
 }
