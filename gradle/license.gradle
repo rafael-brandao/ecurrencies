@@ -5,7 +5,7 @@ subprojects {
         ext.name = 'Rafael Brandão'
         ext.email = 'rafa.bra@gmail.com'
 
-        header rootProject.file('gradle/LICENSE_HEADER')
+        header rootProject.file('code-quality/HEADER')
         strictCheck true
     }
 }
