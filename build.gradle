@@ -42,7 +42,6 @@ ext {
             'scalatest'        : "org.scalatest:scalatest_$scalaVersion:2.1.0",
             'snappy-java'      : 'org.xerial.snappy:snappy-java:1.1.1-M1',
             'spray-client'     : 'io.spray:spray-client:1.3.1',
-            'zinc'             : 'com.typesafe.zinc:zinc:0.3.2-M1'
     ]
 }
 
@@ -63,8 +62,6 @@ configure(scalaProjects) {
         testCompile libs['junit']
         testCompile libs['mockito-all']
         testCompile libs['scalatest']
-
-        zinc libs['zinc']
     }
 
     configurations.all*.resolutionStrategy {
@@ -85,7 +82,7 @@ configure(scalaProjects) {
             additionalParameters = ['-feature', '-Yinline-warnings', '-Ywarn-all']
             deprecation = true
             useCompileDaemon = false
-            useAnt = true
+            useAnt = false
             configure(forkOptions) {
                 memoryMaximumSize = '1g'
                 jvmArgs = ['-XX:MaxPermSize=512m']
@@ -115,19 +112,18 @@ configure(scalabuffProjects) {
         generateDescriptor = true
     }
 
-    tasks.withType(ScalaCompile) {
-        scalaCompileOptions.useAnt = true
-    }
-
     artifacts {
         archives file : file('src/protobuff/domain.proto'), type:'proto'
         archives file : file("${scalabuff.generatedResourcesDir}/domain.proto.descriptor"), type:'proto.descriptor'
     }
-
 }
+
+task wrapper(type: Wrapper) {
+    gradleVersion = "1.12"
+}
+
+apply from: script('license')
 
 File script(String name) {
     project.file("gradle/${name}.gradle")
 }
-
-apply from: script('license')
